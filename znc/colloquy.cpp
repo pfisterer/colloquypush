@@ -7,7 +7,6 @@
  */
 
 #include <znc/znc.h>
-#include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 #include <znc/User.h>
 #include <znc/Modules.h>
@@ -386,7 +385,7 @@ public:
 			CString sNicks = sLine.Token(1, true);
 			if(sNicks[0] == ':')
 				sNicks.LeftChomp();
-			PutUser(":" + GetNetwork()->GetIRCServer() + " 303 " + GetNetwork()->GetIRCNick().GetNick() + " :" + sNicks);
+			PutUser(":" + m_pUser->GetIRCServer() + " 303 " + m_pUser->GetIRCNick().GetNick() + " :" + sNicks);
 
 			return HALTCORE;
 		}
@@ -728,7 +727,7 @@ public:
 
 		if (iBadge != 0) {
 			CUser* pUser = GetUser();
-			if (pUser && m_bAwayOnlyPush && !(GetNetwork()->IsIRCAway())) {
+			if (pUser && m_bAwayOnlyPush && !(pUser->IsIRCAway())) {
 				return false;
 			}
 		}
@@ -775,7 +774,7 @@ public:
 		}
 
 		bool bRet = true;
-		vector<CClient*>& vpClients = GetNetwork()->GetClients();
+		vector<CClient*>& vpClients = m_pUser->GetClients();
 
 		// Cycle through all of the cached devices
 		for (map<CString, CDevice*>::iterator it = m_mspDevices.begin(); it != m_mspDevices.end(); it++) {
@@ -800,7 +799,7 @@ public:
 			// If it's a highlight, then we need to make sure it matches a highlited word
 			if (bHilite) {
 				// Test our current irc nick
-				const CString& sMyNick(GetNetwork()->GetIRCNick().GetNick());
+				const CString& sMyNick(m_pUser->GetIRCNick().GetNick());
 				bool bMatches = Test(sMyNick, sMessage) || Test(sMyNick + "?*", sMessage);
 
 				// If our nick didn't match, test the list of keywords for this device
